@@ -1,5 +1,5 @@
 ===================
-Askbot - Q&A forum
+Putsches
 ===================
 
 This is Askbot project - open source Q&A system, like StackOverflow, Yahoo Answers and some others.
@@ -42,3 +42,9 @@ Copyright Askbot S.p.A and the project contributors, 2010-2016.
 
 "Askbot" is a trademark and service mark registered in the United States, number 4323777.
 
+=======
+Project for a web community to debate and intervene on matters of civic interest.
+
+Putsches is based on the code of Askbot, an open source Q&A system created by
+Evgeny Fadeev on the basis of CNPROG and OSQA. In fact, at this point Putsches is 
+little more than a Askbot fork configured for Heroku deployment.
