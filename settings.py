@@ -1,5 +1,6 @@
 ## Django settings for ASKBOT enabled project.
 import os.path
+import os
 import logging
 import sys
 import askbot
@@ -13,6 +14,8 @@ DEBUG = True  # set to True to enable debugging
 TEMPLATE_DEBUG = False  # keep false when debugging jinja2 templates
 INTERNAL_IPS = ('127.0.0.1',)
 ALLOWED_HOSTS = ['*',]#change this for better security on your site
+
+SECRET_KEY = os.environ['SECRET_KEY']
 
 ADMINS = (
     ('Your Name', 'your_email@domain.com'),
