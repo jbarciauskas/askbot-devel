@@ -26,6 +26,11 @@ MANAGERS = ADMINS
 DATABASES = {
     'default':  dj_database_url.config()
 }
+if("ASKBOT_SCHEMA_NAME" in os.environ):
+    DATABASES['default']['OPTIONS'] = {
+        'options': '-c search_path=' + os.environ['ASKBOT_SCHEMA_NAME']
+    }
+
 #DATABASES = {
 #    'default': {
 #        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
