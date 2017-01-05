@@ -220,7 +220,7 @@ AUTHENTICATION_BACKENDS = (
 #logging settings
 logging.basicConfig(
     stream=sys.stdout,
-    level=logging.CRITICAL,
+    level=logging.WARN,
     format='%(pathname)s TIME: %(asctime)s MSG: %(filename)s:%(funcName)s:%(lineno)d %(message)s',
 )
 
