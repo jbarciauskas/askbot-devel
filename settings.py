@@ -129,10 +129,6 @@ MIDDLEWARE_CLASSES = (
     'askbot.middleware.csrf.CsrfViewMiddleware',
 )
 
-JINJA2_EXTENSIONS = (
-    'compressor.contrib.jinja2ext.CompressorExtension',
-)
-
 COMPRESS_PRECOMPILERS = (
     ('text/less', 'lessc {infile} {outfile}'),
 )
@@ -174,10 +170,12 @@ INSTALLED_APPS = (
     'django.contrib.sitemaps',
     'django.contrib.messages',
     'compressor',
+    'captcha',
     #'debug_toolbar',
     #'haystack',
     'askbot',
     'askbot.deps.django_authopenid',
+    'askbot.deps.group_messaging',
     #'askbot.importers.stackexchange', #se loader
     'askbot.deps.livesettings',
     'keyedcache',
@@ -188,8 +186,6 @@ INSTALLED_APPS = (
     'followit',
     'tinymce',
     #'avatar',#experimental use git clone git://github.com/ericflo/django-avatar.git$
-
-    'compressor',
 )
 
 
@@ -219,9 +215,8 @@ AUTHENTICATION_BACKENDS = (
 )
 
 #logging settings
-LOG_FILENAME = 'askbot.log'
 logging.basicConfig(
-    filename=os.path.join(os.path.dirname(__file__), 'log', LOG_FILENAME),
+    stream=sys.stdout,
     level=logging.CRITICAL,
     format='%(pathname)s TIME: %(asctime)s MSG: %(filename)s:%(funcName)s:%(lineno)d %(message)s',
 )
@@ -320,3 +315,5 @@ VERIFIER_EXPIRE_DAYS = 3
 AVATAR_AUTO_GENERATE_SIZES = (16, 32, 48, 128)
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+NOCAPTCHA = True
+JINJA2_TEMPLATES = ('captcha',)
