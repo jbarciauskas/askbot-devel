@@ -1,14 +1,14 @@
 /* function testing for existence of a column in a table
    if table does not exists, function will return "false" */
 CREATE OR REPLACE FUNCTION column_exists(colname text, tablename text)
-RETURNS boolean AS 
+RETURNS boolean AS
 $$
 DECLARE
     q text;
     onerow record;
 BEGIN
 
-    q = 'SELECT attname FROM pg_attribute WHERE attrelid = ( SELECT oid FROM pg_class WHERE relname = '''||tablename||''') AND attname = '''||colname||''''; 
+    q = 'SELECT attname FROM pg_attribute WHERE attrelid = ( SELECT c.oid FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE  n.nspname = current_schema AND    c.relname = '''||tablename||''' ) AND attname = '''||colname||'''';
 
     FOR onerow IN EXECUTE q LOOP
         RETURN true;
