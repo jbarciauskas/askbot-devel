@@ -1,10 +1,12 @@
 ## Django settings for ASKBOT enabled project.
+import dj_database_url
 import os.path
 import os
 import logging
-import sys
 import askbot
 import site
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 #this line is added so that we can import pre-packaged askbot dependencies
 ASKBOT_ROOT = os.path.abspath(os.path.dirname(askbot.__file__))
@@ -15,20 +17,27 @@ TEMPLATE_DEBUG = False  # keep false when debugging jinja2 templates
 INTERNAL_IPS = ('127.0.0.1',)
 ALLOWED_HOSTS = ['*',]#change this for better security on your site
 
-SECRET_KEY = os.environ['SECRET_KEY']
-
 ADMINS = (
     ('Your Name', 'your_email@domain.com'),
 )
 
 MANAGERS = ADMINS
 
-DATABASE_ENGINE = 'postgresql_psycopg2' # only postgres (>8.3) and mysql are supported so far others have not been tested yet
-DATABASE_NAME = ''             # Or path to database file if using sqlite3.
-DATABASE_USER = ''             # Not used with sqlite3.
-DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+DATABASES = {
+    'default':  dj_database_url.config()
+}
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+#        'NAME': '{{database_name}}',                      # Or path to database file if using sqlite3.
+#        'USER': '{{database_user}}',                      # Not used with sqlite3.
+#        'PASSWORD': '{{database_password}}',                  # Not used with sqlite3.
+#        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+#        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+#        'TEST_CHARSET': 'utf8',              # Setting the character set and collation to utf-8
+#        'TEST_COLLATION': 'utf8_general_ci', # is necessary for MySQL tests to work properly.
+#    }
+#}
 
 #outgoing mail server settings
 SERVER_EMAIL = ''
@@ -40,21 +49,6 @@ EMAIL_HOST=''
 EMAIL_PORT=''
 EMAIL_USE_TLS=False
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-#incoming mail settings
-#after filling out these settings - please
-#go to the site's live settings and enable the feature
-#"Email settings" -> "allow asking by email"
-#
-#   WARNING: command post_emailed_questions DELETES all
-#            emails from the mailbox each time
-#            do not use your personal mail box here!!!
-#
-IMAP_HOST = ''
-IMAP_HOST_USER = ''
-IMAP_HOST_PASSWORD = ''
-IMAP_PORT = ''
-IMAP_USE_TLS = False
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -72,23 +66,25 @@ SITE_ID = 1
 USE_I18N = True
 LANGUAGE_CODE = 'en'
 LANGUAGES = (('en', 'English'),)
-ASKBOT_LANGUAGE_MODE = 'single-lang' #'single-lang', 'url-lang' or 'user-lang'
+ASKBOT_LANGUAGE_MODE = 'single-lang' #'single-lang', 'url-lang', 'user-lang'
 
-# Absolute path to the directory that holds media.
+# Absolute path to the directory that holds uploaded media
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = os.path.join(os.path.dirname(__file__), 'askbot', 'upfiles')
-MEDIA_URL = '/upfiles/'#url to uploaded media
-STATIC_URL = '/m/'#url to project static files
+MEDIA_URL = '/upfiles/'
+STATIC_URL = '/m/'#this must be different from MEDIA_URL
 
 PROJECT_ROOT = os.path.dirname(__file__)
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')#path to files collected by collectstatic
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'#must be this value
+ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 
-# List of callables that know how to import templates from various sources.
+# Make up some unique string, and don't share it with anybody.
+SECRET_KEY = os.environ['SECRET_KEY']
+
 TEMPLATES = (
     {
         'BACKEND': 'askbot.skins.template_backends.AskbotSkinTemplates',
@@ -129,10 +125,7 @@ MIDDLEWARE_CLASSES = (
     'askbot.middleware.csrf.CsrfViewMiddleware',
 )
 
-COMPRESS_PRECOMPILERS = (
-    ('text/less', 'lessc {infile} {outfile}'),
-)
-
+ATOMIC_REQUESTS = True
 
 ROOT_URLCONF = os.path.basename(os.path.dirname(__file__)) + '.urls'
 
@@ -169,13 +162,12 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'django.contrib.sitemaps',
     'django.contrib.messages',
-    'compressor',
-    'captcha',
     #'debug_toolbar',
+    #Optional, to enable haystack search
     #'haystack',
+    'compressor',
     'askbot',
     'askbot.deps.django_authopenid',
-    'askbot.deps.group_messaging',
     #'askbot.importers.stackexchange', #se loader
     'askbot.deps.livesettings',
     'keyedcache',
@@ -185,7 +177,10 @@ INSTALLED_APPS = (
     'djkombu',
     'followit',
     'tinymce',
+    'askbot.deps.group_messaging',
     #'avatar',#experimental use git clone git://github.com/ericflo/django-avatar.git$
+    'captcha',
+    'avatar',
 )
 
 
@@ -214,12 +209,38 @@ AUTHENTICATION_BACKENDS = (
     'askbot.deps.django_authopenid.backends.AuthBackend',
 )
 
-#logging settings
-logging.basicConfig(
-    stream=sys.stdout,
-    level=logging.WARN,
-    format='%(pathname)s TIME: %(asctime)s MSG: %(filename)s:%(funcName)s:%(lineno)d %(message)s',
-)
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': ('%(asctime)s [%(process)d] [%(levelname)s] ' +
+                       'pathname=%(pathname)s lineno=%(lineno)s ' +
+                       'funcname=%(funcName)s %(message)s'),
+            'datefmt': '%Y-%m-%d %H:%M:%S'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        }
+    },
+    'handlers': {
+        'null': {
+            'level': 'DEBUG',
+            'class': 'logging.NullHandler',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        }
+    },
+    'loggers': {
+        'testlogger': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        }
+    }
+}
 
 ###########################
 #
@@ -231,7 +252,7 @@ ASKBOT_URL = '' #no leading slash, default = '' empty string
 ASKBOT_TRANSLATE_URL = True #translate specific URLs
 _ = lambda v:v #fake translation function for the login url
 LOGIN_URL = '/%s%s%s' % (ASKBOT_URL,_('account/'),_('signin/'))
-LOGIN_REDIRECT_URL = ASKBOT_URL #adjust if needed
+LOGIN_REDIRECT_URL = ASKBOT_URL #adjust, if needed
 #note - it is important that upload dir url is NOT translated!!!
 #also, this url must not have the leading slash
 ALLOW_UNICODE_SLUGS = False
@@ -243,11 +264,13 @@ CELERY_ALWAYS_EAGER = True
 
 import djcelery
 djcelery.setup_loader()
+DOMAIN_NAME = 'askbot.openedx.org'
 
-CSRF_COOKIE_NAME = 'askbot_csrf'
-#enter domain name here - e.g. example.com
-#CSRF_COOKIE_DOMAIN = ''
+CSRF_COOKIE_NAME = DOMAIN_NAME + '_csrf'
+#https://docs.djangoproject.com/en/1.3/ref/contrib/csrf/
+#CSRF_COOKIE_DOMAIN = DOMAIN_NAME
 
+STATIC_ROOT = os.path.join(PROJECT_ROOT, "static")
 STATICFILES_DIRS = (
     ('default/media', os.path.join(ASKBOT_ROOT, 'media')),
 )
@@ -257,7 +280,7 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
-RECAPTCHA_USE_SSL = True
+NOCAPTCHA = True
 
 #HAYSTACK_SETTINGS
 ENABLE_HAYSTACK_SEARCH = False
@@ -272,6 +295,7 @@ ENABLE_HAYSTACK_SEARCH = False
 #            }
 #}
 
+
 TINYMCE_COMPRESSOR = True
 TINYMCE_SPELLCHECKER = False
 TINYMCE_JS_ROOT = os.path.join(STATIC_ROOT, 'default/media/tinymce/')
@@ -280,11 +304,12 @@ TINYMCE_DEFAULT_CONFIG = {
     'plugins': 'askbot_imageuploader,askbot_attachment',
     'convert_urls': False,
     'theme': 'advanced',
+    'content_css': STATIC_URL + 'default/media/style/tinymce/content.css',
     'force_br_newlines': True,
     'force_p_newlines': False,
     'forced_root_block': '',
     'mode' : 'textareas',
-    'oninit': "TinyMCE.onInitHook",
+    'oninit': 'TinyMCE.onInitHook',
     'theme_advanced_toolbar_location' : 'top',
     'theme_advanced_toolbar_align': 'left',
     'theme_advanced_buttons1': 'bold,italic,underline,|,bullist,numlist,|,undo,redo,|,link,unlink,askbot_imageuploader,askbot_attachment',
@@ -307,13 +332,22 @@ GROUP_MESSAGING = {
     'BASE_URL_PARAMS': {'section': 'messages', 'sort': 'inbox'}
 }
 
+ASKBOT_CSS_DEVEL = False
+if 'ASKBOT_CSS_DEVEL' in locals() and ASKBOT_CSS_DEVEL == True:
+    COMPRESS_PRECOMPILERS = (
+        ('text/less', 'lessc {infile} {outfile}'),
+    )
+
 COMPRESS_JS_FILTERS = []
 COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 JINJA2_EXTENSIONS = ('compressor.contrib.jinja2ext.CompressorExtension',)
+JINJA2_TEMPLATES = ('captcha',)
+
+# Use syncdb for tests instead of South migrations. Without this, some tests
+# fail spuriously in MySQL.
+SOUTH_TESTS_MIGRATE = False
 
 VERIFIER_EXPIRE_DAYS = 3
-AVATAR_AUTO_GENERATE_SIZES = (16, 32, 48, 128)
+AVATAR_AUTO_GENERATE_SIZES = (16, 32, 48, 128) #change if avatars are sized differently
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
-NOCAPTCHA = True
-JINJA2_TEMPLATES = ('captcha',)
