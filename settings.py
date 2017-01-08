@@ -77,10 +77,10 @@ ASKBOT_LANGUAGE_MODE = 'single-lang' #'single-lang', 'url-lang', 'user-lang'
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = os.path.join(os.path.dirname(__file__), 'askbot', 'upfiles')
 MEDIA_URL = '/upfiles/'
-STATIC_URL = '/m/'#this must be different from MEDIA_URL
 
 PROJECT_ROOT = os.path.dirname(__file__)
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
+STATIC_URL = '/static/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -275,8 +275,8 @@ CSRF_COOKIE_NAME = DOMAIN_NAME + '_csrf'
 #https://docs.djangoproject.com/en/1.3/ref/contrib/csrf/
 #CSRF_COOKIE_DOMAIN = DOMAIN_NAME
 
-STATIC_ROOT = os.path.join(PROJECT_ROOT, "static")
 STATICFILES_DIRS = (
+    os.path.join(ASKBOT_ROOT, "static"),
     ('default/media', os.path.join(ASKBOT_ROOT, 'media')),
 )
 STATICFILES_FINDERS = (
