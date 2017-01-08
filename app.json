@@ -1,0 +1,21 @@
+{
+  "name": "Askbot",
+  "description": "An open source Q&A site",
+  "website": "https://askbot.com",
+  "addons": ["heroku-postgresql:hobby-dev"],
+  "env": {
+    "SECRET_KEY": {
+      "description": "Django secret key",
+      "generator": "secret"
+    },
+    "DJANGO_SETTINGS_MODULE": {
+      "description": "Django settings",
+      "value": "settings"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ]
+}

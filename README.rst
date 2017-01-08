@@ -51,6 +51,9 @@ This is a fork of the Askbot project - open source Q&A system, like StackOverflo
 
 This fork consists of an initialized Askbot installation containing the necessary modifications to deploy in heroku with a PostgreSQL database.
 
+.. image:: https://www.herokucdn.com/deploy/button.svg
+   :target: https://heroku.com/deploy
+
 To deploy in heroku:
 
 1. Create the heroku app with ``heroku create``
