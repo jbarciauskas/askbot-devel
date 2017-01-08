@@ -277,6 +277,7 @@ CSRF_COOKIE_NAME = DOMAIN_NAME + '_csrf'
 
 STATICFILES_DIRS = (
     os.path.join(ASKBOT_ROOT, "static"),
+    ('default/media', os.path.join(ASKBOT_ROOT, 'media')),
 )
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -302,13 +303,13 @@ ENABLE_HAYSTACK_SEARCH = False
 
 TINYMCE_COMPRESSOR = True
 TINYMCE_SPELLCHECKER = False
-TINYMCE_JS_ROOT = os.path.join(STATIC_ROOT, 'tinymce/')
-TINYMCE_JS_URL = STATIC_URL + 'tinymce/tiny_mce.js'
+TINYMCE_JS_ROOT = os.path.join(STATIC_ROOT, 'default/media/tinymce/')
+TINYMCE_JS_URL = STATIC_URL + 'default/media/tinymce/tiny_mce.js'
 TINYMCE_DEFAULT_CONFIG = {
     'plugins': 'askbot_imageuploader,askbot_attachment',
     'convert_urls': False,
     'theme': 'advanced',
-    'content_css': STATIC_URL + 'style/tinymce/content.css',
+    'content_css': STATIC_URL + 'default/media/style/tinymce/content.css',
     'force_br_newlines': True,
     'force_p_newlines': False,
     'forced_root_block': '',
