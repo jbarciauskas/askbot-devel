@@ -13,6 +13,9 @@
       "value": "settings"
     }
   },
+  "scripts": {
+    "postdeploy": "python manage.py syncdb --noinput && python manage.py makemigrations && python manage.py migrate"
+  },
   "buildpacks": [
     {
       "url": "heroku/python"
