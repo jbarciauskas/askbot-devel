@@ -132,8 +132,8 @@ MIDDLEWARE_CLASSES = (
 
 ATOMIC_REQUESTS = True
 
-ROOT_URLCONF = os.path.basename(os.path.dirname(__file__)) + '.urls'
-
+#ROOT_URLCONF = os.path.basename(os.path.dirname(__file__)) + '.urls'
+ROOT_URLCONF = 'urls'
 
 #UPLOAD SETTINGS
 FILE_UPLOAD_TEMP_DIR = os.path.join(
