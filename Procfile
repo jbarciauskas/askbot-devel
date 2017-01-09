@@ -1,1 +1,1 @@
-web: gunicorn askbot.whitenoise --log-file -
+web: gunicorn askbot.wsgi --log-file -
